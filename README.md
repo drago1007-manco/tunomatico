@@ -170,9 +170,9 @@ La información se almacena en una base de datos centralizada para garantizar co
 Entre las principales decisiones técnicas destacan:
  - uso de arquitectura por capas para separar responsabilidades,
  - implementación de patrones de diseño para mejorar modularidad y mantenimiento,
- - centralización de conexiones mediante <<Singleton>>,
- - integración desacoplada con servicios externos utilizando <<Adapter>>,
- - soporte para múltiples canales de notificación mediante <<Bridge>>.
+ - centralización de conexiones mediante `<<Singleton>>`,
+ - integración desacoplada con servicios externos utilizando `<<Adapter>>`,
+ - soporte para múltiples canales de notificación mediante `<<Bridge>>`.
 
 Esta estructura permite que el sistema sea escalable, mantenible y preparado para futuras ampliaciones funcionales.
 
