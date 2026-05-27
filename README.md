@@ -38,32 +38,62 @@ El modelado contempla tanto la visión funcional del sistema mediante diagramas 
 El análisis funcional permitió identificar con claridad los actores involucrados y las funcionalidades críticas del sistema. Además, se aplicaron correctamente **relaciones de `<<include>>` y `<<extend>>`** para reflejar flujos obligatorios y opcionales en el proceso.
 
 #### Actores identificados:
-- **Bodeguero**: Responsable de operaciones de ingreso y egreso de insumos, consulta de stock.
-- **Supervisor Médico**: Consulta stock, visualiza trazabilidad, genera reportes de alertas.
-- **Administrador del Sistema**: Configura el sistema, gestiona usuarios, integra con ERP, realiza auditorías.
-- **Auditor Externo**: Revisa auditoría de movimientos, accede a reportes de trazabilidad.
-- **Sistema ERP Hospitalario**: Actor externo con el que se sincronizan datos críticos.
+- **Cliente**: Representa al usuario final que solicita atención mediante el sistema.
+- **Recepcionista**: Es el encargado de administrar la atención presencial y controlar el flujo de turnos dentro de la institución.
+- **Administrador**: Actor con privilegios avanzados sobre el sistema.
+- **Sistema de Pantalla**: Corresponde al módulo encargado de mostrar visualmente los turnos llamados y la información de atención en tiempo real.
+- **Servicio Externo de Notificaciones**: Representa plataformas externas utilizadas para el envío de mensajes SMS o correos electrónicos a los clientes.
 
 #### Casos de uso destacados y relaciones aplicadas:
-- **Ingreso de Insumos con Código de Barras**
-  - `<<extend>>` **Alertas Automáticas por Stock Bajo o Vencimiento Próximo**: al ingresar insumos, puede opcionalmente activarse una alerta.
-- **Egreso Controlado de Insumos**
-  - `<<extend>>` **Alertas Automáticas por Stock Bajo o Vencimiento Próximo**: al egresar insumos, podría dispararse una alerta opcional.
-  - `<<extend>>` **Generación de Reportes de Movimientos**: se puede generar el reporte posterior al egreso como acción opcional.
-- **Consulta Detallada de Stock por Bodega y Lote**
-  - `<<extend>>` **Generación de Reportes de Alertas**: opcionalmente, tras consultar stock, se puede emitir un reporte.
-- **Auditoría de Movimientos y Trazabilidad**
-  - `<<include>>` **Generación de Reportes de Movimientos**: la generación de reportes es siempre parte del proceso de auditoría.
-- **Integración con Sistema ERP Hospitalario**
-  - Comunicación obligatoria con el actor **Sistema ERP Hospitalario** para sincronización.
+- **Solicitar Turno**
+  - `<<include>>` **Seleccionar Servicio**: para generar un turno es obligatorio seleccionar previamente el tipo de atención requerida.
+  - `<<include>>` **Validar Disponibilidad**: el sistema debe verificar obligatoriamente la disponibilidad de atención antes de asignar el turno.
+  - `<<include>>` **Registrar Cliente Preferencial**: opcionalmente puede identificarse al cliente como preferencial para otorgar prioridad de atención.
+- **Llamar Turno**
+  - `<<include>>` **Mostrar Turno en Pantalla**: cada vez que se llama un turno, este debe visualizarse obligatoriamente en las pantallas del sistema.
+  - `<<include>>` **Enviar Notificación**: el sistema puede notificar automáticamente al cliente mediante SMS o correo electrónico.
+- **Cancelar Turno**
+  - `<<extend>>` **Enviar Notificación**: opcionalmente el sistema puede informar al cliente sobre la cancelación realizada.
+  - `<<extend>>` **Generar Registro de Cancelación**: el sistema puede almacenar un registro adicional para fines administrativos y de auditoría.
+- **Reagendar Turno**:
+  - `<<extend>>` **Solicitar Turno**: el reagendamiento reutiliza parte del flujo de creación de turnos, pero ocurre únicamente cuando el cliente desea modificar su atención previamente registrada.
 
 #### Justificación de las relaciones aplicadas:
-- Se utilizaron `<<include>>` en procesos donde el caso de uso base **siempre depende de otro caso obligatorio**, como en la **Auditoría de Movimientos y Trazabilidad**, que necesariamente genera un reporte.
-- Se aplicaron `<<extend>>` en procesos donde las acciones son **condicionadas o opcionales**, como la **generación de reportes tras egresos** o la **activación de alertas al ingresar o egresar insumos**.
-- Se reforzó la modularidad y claridad de los flujos mediante estas relaciones, cumpliendo con el nivel de detalle exigido en entornos profesionales.
+Se utilizaron relaciones <<include>> en funcionalidades donde el caso de uso principal depende obligatoriamente de procesos secundarios para completarse correctamente, como ocurre en:
+
+validación de disponibilidad,
+generación de tickets,
+visualización de turnos,
+consulta de historiales.
+
+Estas funcionalidades forman parte esencial del flujo principal y siempre deben ejecutarse.
+
+Las relaciones <<extend>> fueron aplicadas en funcionalidades opcionales o condicionadas por determinadas situaciones del sistema o decisiones del usuario, como:
+
+registrar clientes preferenciales,
+cancelar turnos,
+reagendar atenciones,
+generar registros administrativos adicionales.
+
+Estas acciones complementan el comportamiento principal, pero no son obligatorias en todos los escenarios.
+
+La utilización de <<include>> y <<extend>> permite:
+mejorar la modularidad del sistema,
+representar de manera más clara las dependencias funcionales,
+evitar duplicidad de procesos,
+facilitar el mantenimiento y escalabilidad del modelo UML.
 
 #### Relación destacada:
-El sistema se comunica con el **Sistema ERP Hospitalario** para sincronizar datos de movimientos, egresos e ingresos, garantizando integridad y trazabilidad en la cadena logística institucional.
+Solicitar Turno <<include>> Validar Disponibilidad
+
+Esta relación es una de las más importantes del sistema debido a que garantiza la consistencia y disponibilidad de atención antes de emitir un turno.
+
+Sin esta validación podrían producirse:
+
+sobrecarga de atención,
+duplicidad de turnos,
+conflictos de horarios,
+errores operacionales.
 
 
 ## 🔹 2. Diagrama de Clases UML con Patrones Aplicados
