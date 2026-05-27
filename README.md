@@ -97,7 +97,7 @@ errores operacionales.
 
 
 ## 🔹 2. Diagrama de Clases UML con Patrones Aplicados
-<img width="3551" height="1172" alt="444619757-ef4a83da-4246-44e8-9b8a-0de62471b0a7" src="https://github.com/user-attachments/assets/0ef32c13-22b8-4aca-99b8-d022ddcfa93f" />
+<img width="3551" height="1172" alt="444619757-ef4a83da-4246-44e8-9b8a-0de62471b0a7" src="https://github.com/drago1007-manco/tunomatico/blob/main/diagrama%20de%20clases.png" />
 
 
 
@@ -106,10 +106,14 @@ errores operacionales.
 ### Selección de patrones
 La elección de los patrones de diseño no fue arbitraria, sino estratégica y alineada a las necesidades específicas del sistema y sus desafíos técnicos:
 
-### **1. Singleton (`ConfiguracionSistema`)**
+### **1. Singleton**
 #### Justificación:
-Se seleccionó Singleton para la **gestión centralizada de parámetros críticos del sistema**, como tiempos de vencimiento, stock mínimo, tipos de alerta, entre otros.  
-Este patrón permite garantizar que **exista una única instancia accesible globalmente**, evitando inconsistencias y facilitando la administración de la configuración desde cualquier módulo del sistema.
+El patrón Singleton fue implementado en la clase GestorConexion, permitiendo centralizar y controlar el acceso único a la conexión de base de datos.
+
+Su utilización evita:
+  - múltiples conexiones innecesarias
+  - consumo excesivo de recursos
+  - inconsistencias de acceso
 
 #### Intención arquitectónica:
 - Centralizar el control de la configuración.
@@ -118,64 +122,77 @@ Este patrón permite garantizar que **exista una única instancia accesible glob
 
 ---
 
-### **2. Prototype (`PlantillaMovimiento`)**
+### **2. Prototype**
 #### Justificación:
-La operación hospitalaria exige rapidez y eficiencia en la gestión de movimientos repetitivos.  
-Se implementó Prototype para **permitir la clonación de plantillas de movimientos frecuentes**, como egresos de insumos comunes o ingresos masivos programados, permitiendo a los operadores agilizar las operaciones sin recrear movimientos desde cero.
+El patrón Prototype fue aplicado mediante la clase TurnoPrototype, permitiendo clonar configuraciones base de turnos sin recrear objetos complejos desde cero.
 
-#### Intención arquitectónica:
-- Reducir la complejidad y tiempo de operaciones manuales.
-- Permitir la creación rápida de nuevas instancias de movimientos desde plantillas base, manteniendo flexibilidad y control.
-- Facilitar la parametrización de campañas o protocolos especiales (ej.: vacunación masiva).
+Esto mejora:
+ - rendimiento
+ - reutilización de estructuras
+ - flexibilidad para generar distintos tipos de turnos.
 
 ---
 
-### **3. Adapter (`AdaptadorERP`)**
+### **3. Adapter**
 #### Justificación:
-Dado que el sistema debe integrarse con el ERP hospitalario, el uso de Adapter fue clave para **desacoplar el núcleo del sistema de la API del ERP externo**, permitiendo mantener la flexibilidad en caso de cambios o actualizaciones en el sistema ERP.
+El patrón Adapter fue utilizado para integrar servicios externos de mensajería SMS que poseen interfaces incompatibles con el sistema interno.
 
-#### Intención arquitectónica:
-- Asegurar la independencia tecnológica del sistema interno.
-- Facilitar el mantenimiento y evolución del sistema de integración.
-- Permitir la adaptación a distintos sistemas externos (ERP, contabilidad, etc.) sin impactar el dominio.
+La clase AdaptadorSMS actúa como intermediario entre el sistema Tunomático y el proveedor externo de notificaciones.
+
+Esto permite:
+ - desacoplar integraciones externas
+ - facilitar cambios futuros de proveedor
+ - mantener estabilidad del sistema
 
 ---
 
-### **4. Bridge (`InterfazUsuario` + `VistaBodeguero`, `VistaSupervisor`)**
+### **4. Bridge**
 #### Justificación:
-Considerando la diversidad de usuarios y dispositivos (bodeguero móvil, supervisor en escritorio, etc.), se aplicó Bridge para **separar la interfaz de usuario de la lógica de negocio**, permitiendo adaptar la experiencia según el perfil del usuario y el dispositivo utilizado, sin afectar la lógica central del sistema.
+El patrón Bridge fue implementado en el sistema de notificaciones para desacoplar los tipos de notificación de los canales de envío.
 
-#### Intención arquitectónica:
-- Flexibilizar las vistas según necesidades operativas.
-- Garantizar independencia entre interfaz y lógica.
-- Facilitar futuras integraciones con nuevas plataformas (app, web, terminal de autoservicio).
+Gracias a esta estructura, el sistema puede enviar mensajes mediante:
+ - SMS
+ - correo electrónico
+ - futuros canales adicionales
 
 ---
 
 ## 🔹 3. Diagrama de Implementación UML
-<img width="2862" height="478" alt="444619988-e78fb473-d493-4c4a-b916-c470f34e63e7" src="https://github.com/user-attachments/assets/6b90e530-cce8-4858-8dbb-f638a0d439ee" />
-
-
+<img width="1089" height="496" alt="image" src="https://github.com/user-attachments/assets/b70c0542-76b2-4d0f-96d2-6162cd389915" />
 
 ### Despliegue Físico y decisiones técnicas:
-- **Nodos físicos diferenciados** para reforzar seguridad, escalabilidad y disponibilidad.
-- Separación clara de responsabilidades entre servidores de aplicaciones, configuración, integración ERP, y bases de datos.
-- Uso de protocolos estándar (REST, SOAP) en las integraciones externas.
-- Aislamiento de componentes críticos (como `ConfiguracionSistema`) en nodos dedicados para reforzar el control de cambios y configuración.
+El sistema Tunomático fue diseñado bajo una arquitectura cliente-servidor distribuida, compuesta por terminales de atención, servidor de aplicaciones, base de datos centralizada y servicios externos de notificación.
+
+Los clientes y recepcionistas acceden al sistema mediante interfaces web o terminales conectadas al servidor principal, donde se ejecuta la lógica de negocio y la administración de turnos.
+
+La información se almacena en una base de datos centralizada para garantizar consistencia, seguridad y acceso concurrente. Además, el sistema se integra con servicios externos de SMS y correo electrónico mediante API REST para el envío de notificaciones automáticas.
+
+Entre las principales decisiones técnicas destacan:
+ - uso de arquitectura por capas para separar responsabilidades,
+ - implementación de patrones de diseño para mejorar modularidad y mantenimiento,
+ - centralización de conexiones mediante <<Singleton>>,
+ - integración desacoplada con servicios externos utilizando <<Adapter>>,
+ - soporte para múltiples canales de notificación mediante <<Bridge>>.
+
+Esta estructura permite que el sistema sea escalable, mantenible y preparado para futuras ampliaciones funcionales.
 
 ---
 
 ## 🧩 Reflexiones Finales del Modelado
 
-Este ejercicio refleja una aproximación arquitectónica profesional donde:
-- Cada patrón fue seleccionado según necesidades específicas y no como elemento decorativo.
-- La transición entre **caso de uso ➡ diagrama de clases ➡ implementación** permitió mantener una trazabilidad clara desde el negocio hasta la infraestructura.
-- La modularización y aplicación de patrones permitieron diseñar un sistema robusto, flexible, mantenible y alineado a buenas prácticas de ingeniería de software.
+El desarrollo del modelado UML para el sistema Tunomático permitió comprender la importancia de una correcta planificación arquitectónica antes de la implementación del software.
 
-Este repositorio tiene como propósito servir de **referencia formal para futuros trabajos de modelado arquitectónico**, mostrando estándares exigidos en entornos profesionales.
+La utilización de diagramas UML facilitó:
+ - visualizar responsabilidades,
+ - identificar dependencias,
+ - organizar componentes,
+ - anticipar problemas de diseño.
 
----
+La aplicación de patrones de diseño GOF permitió construir una arquitectura más flexible, reutilizable y mantenible, alineada con buenas prácticas de ingeniería de software.
 
-## ⚠️ Nota
-Este repositorio es exclusivamente documental.  
-No se incluye código fuente, ya que el foco es el modelado arquitectónico.
+Asimismo, la separación por capas y el uso de componentes desacoplados favorecen la futura evolución del sistema, permitiendo incorporar nuevas funcionalidades sin afectar significativamente la estructura existente.
+
+Finalmente, el modelado realizado demuestra cómo UML y los patrones de diseño constituyen herramientas fundamentales para desarrollar sistemas escalables, organizados y preparados para escenarios reales de producción.
+
+
+
