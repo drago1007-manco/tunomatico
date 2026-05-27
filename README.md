@@ -59,7 +59,7 @@ El análisis funcional permitió identificar con claridad los actores involucrad
   - `<<extend>>` **Solicitar Turno**: el reagendamiento reutiliza parte del flujo de creación de turnos, pero ocurre únicamente cuando el cliente desea modificar su atención previamente registrada.
 
 #### Justificación de las relaciones aplicadas:
-Se utilizaron relaciones <<include>> en funcionalidades donde el caso de uso principal depende obligatoriamente de procesos secundarios para completarse correctamente, como ocurre en:
+Se utilizaron relaciones `<<include>>` en funcionalidades donde el caso de uso principal depende obligatoriamente de procesos secundarios para completarse correctamente, como ocurre en:
 
 validación de disponibilidad,
 generación de tickets,
@@ -68,7 +68,7 @@ consulta de historiales.
 
 Estas funcionalidades forman parte esencial del flujo principal y siempre deben ejecutarse.
 
-Las relaciones <<extend>> fueron aplicadas en funcionalidades opcionales o condicionadas por determinadas situaciones del sistema o decisiones del usuario, como:
+Las relaciones `<<extend>>` fueron aplicadas en funcionalidades opcionales o condicionadas por determinadas situaciones del sistema o decisiones del usuario, como:
 
 registrar clientes preferenciales,
 cancelar turnos,
@@ -77,14 +77,14 @@ generar registros administrativos adicionales.
 
 Estas acciones complementan el comportamiento principal, pero no son obligatorias en todos los escenarios.
 
-La utilización de <<include>> y <<extend>> permite:
+La utilización de `<<include>>` y `<<extend>>` permite:
 mejorar la modularidad del sistema,
 representar de manera más clara las dependencias funcionales,
 evitar duplicidad de procesos,
 facilitar el mantenimiento y escalabilidad del modelo UML.
 
 #### Relación destacada:
-Solicitar Turno <<include>> Validar Disponibilidad
+Solicitar Turno `<<include>>` Validar Disponibilidad
 
 Esta relación es una de las más importantes del sistema debido a que garantiza la consistencia y disponibilidad de atención antes de emitir un turno.
 
